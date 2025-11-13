@@ -59,7 +59,7 @@ class Menu:
     def afficherMenu(cls):
         print("-----------------------------------------------")
         print("----------------   MENU     -------------------")
-        print("1 ajoter un livre             -----------------")
+        print("1 ajoter adhérent            -----------------")
         print("C pour continuer              -----------------")
         print("Q pour quitter                -----------------")
         print("-----------------------------------------------")
