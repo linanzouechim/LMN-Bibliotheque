@@ -1,5 +1,3 @@
-
-
 # Document (nom, auteur, numPAge)
 from abc import ABC
 from operator import truediv
@@ -20,7 +18,6 @@ class Livre(Document):
         super().__init__(nom, auteur)
         self.ISBN = ISBN
         self.annee = annee
-
 
 # Adherent id, nom, prenom,
 # identifiant unique ...
@@ -75,8 +72,7 @@ class Menu:
         print("* 7  Ajouter Emprunt                          *")
         print("* 8  Retour d’un Emprunt                      *")
         print("* 9  Afficher tous les Emprunts               *")
-        print("* Q  Quitter                                  *")
-        print("* 6  Afficher tous les Documents              *")
+        print("* 10  Quitter                                 *")
         print("*                                             *")
         print("***********************************************")
 # Ajout adhérent
@@ -89,7 +85,7 @@ condition = True
 
 while (condition):
     Menu.afficherMenu()
-    reponse = input("Reponse : ")
+    reponse = int(input("Reponse : "))
     reponse = reponse.lower()
     if (reponse == "c"):
         condition = True
