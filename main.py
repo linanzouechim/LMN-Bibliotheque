@@ -1,7 +1,5 @@
 
-# test lina
-# test Tharwi
-# test test
+
 # Document (nom, auteur, numPAge)
 from abc import ABC
 from operator import truediv
@@ -61,12 +59,26 @@ class Bibliotheque:
 class Menu:
     @classmethod
     def afficherMenu(cls):
-        print("-----------------------------------------------")
-        print("----------------   MENU     -------------------")
-        print("1 ajoter un livre             -----------------")
-        print("C pour continuer              -----------------")
-        print("Q pour quitter                -----------------")
-        print("-----------------------------------------------")
+        print("***********************************************")
+        print("*                                             *")
+        print("*      Bienvenue à la bibliothèque LMN        *")
+        print("*                                             *")
+        print("***********************************************")
+        print("**********           MENU            **********")
+        print("*                                             *")
+        print("* 1 Ajouter adhérent                          *")
+        print("* 2 Supprimer adhérent                        *")
+        print("* 3 Afficher tous les adhérents               *")
+        print("* 4 Ajouter Document                          *")
+        print("* 5 Supprimer Document                        *")
+        print("* 6  Afficher tous les Documents              *")
+        print("* 7  Ajouter Emprunt                          *")
+        print("* 8  Retour d’un Emprunt                      *")
+        print("* 9  Afficher tous les Emprunts               *")
+        print("* Q  Quitter                                  *")
+        print("* 6  Afficher tous les Documents              *")
+        print("*                                             *")
+        print("***********************************************")
 # Ajout adhérent
 #
 
