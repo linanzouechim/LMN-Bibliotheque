@@ -26,9 +26,10 @@ class Volume(Document):
 # class Livres (ISBN, annee)
 class Livre(Volume):
     def __init__(self):
-        super().__init__(nom, auteur)
+        super().__init__(nom, auteur, disponibilite)
         self.ISBN = ISBN
         self.annee = annee
+        self.disponibilite = disponibilite
 
 # class BD
 class BD(Volume):
