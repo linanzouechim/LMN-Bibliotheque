@@ -25,10 +25,9 @@ class Volume(Document):
 
 # class Livres (ISBN, annee)
 class Livre(Volume):
-    def __init__(self):
-        super().__init__(nom, auteur, disponibilite)
-        self.ISBN = ISBN
-        self.annee = annee
+    def __init__(self, nom, auteur, disponibilite):
+        self.nom = nom
+        self.auteur = auteur
         self.disponibilite = disponibilite
 
 # class BD
@@ -107,7 +106,7 @@ class Menu:
         print("* 7 Ajouter Emprunt                           *")
         print("* 8 Retour d’un Emprunt                       *")
         print("* 9 Afficher tous les Emprunts                *")
-        print("* 10 Quitter                                  *")
+        print("* Q Quitter                                  *")
         print("*                                             *")
         print("***********************************************")
 # Ajout adhérent
@@ -120,12 +119,38 @@ condition = True
 
 while (condition):
     Menu.afficherMenu()
-    reponse = int(input("Reponse : "))
+    reponse = int(input("Faites un choix (entre 1 et 10) : "))
+# 1 Ajouter adhérent
     if (reponse == 1):
-        condition = True
-    elif (reponse == "q"):
         condition = False
-    elif (reponse == "1"):
+# 2 Supprimer adhérent
+    elif (reponse == "2"):
+        condition = False
+# 3 Afficher tous les adhérents
+    elif (reponse == "3"):
+        condition = False
+# 4 Ajouter Document
+    elif (reponse == "4"):
+        condition = False
+# 5 Supprimer Document
+    elif (reponse == "5"):
+        condition = False
+# 6 Afficher tous les Documents
+    elif (reponse == "6"):
+        condition = False
+# 7 Ajouter Emprunt
+    elif (reponse == "7"):
+        condition = False
+# 8 Retour d’un Emprunt
+    elif (reponse == "8"):
+        condition = False
+# 9 Afficher tous les Emprunts
+    elif (reponse == "9"):
+        condition = False
+# 10 Quitter
+    elif (reponse == "10"):
+        condition = False
+    elif (reponse == "8"):
         # code pour ajouter un livre
         titre = input("titre : ")
         auteur = input("auteur : ")
@@ -135,6 +160,6 @@ while (condition):
         Bibliotheque.listeLivres.append(l)
         Bibliotheque.afficher_liste_livres()
     else:
-        print(" Seulement c et q sont acceptés")
+        print(" Seulement 1 et 10 sont acceptés")
         condition = True
 
