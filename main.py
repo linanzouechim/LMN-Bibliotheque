@@ -37,6 +37,7 @@ class BD(Volume):
 
 # class Dictionnaire
 class Dictionnaire(Volume):
+    pass
 
 
 # class Adherent
@@ -44,6 +45,7 @@ class Adherent:
     def __init__(self, nom, prenom):
         self.nom = nom
         self.prenom = prenom
+
 
 
 
@@ -60,23 +62,30 @@ class Emprunt:
 # liste d'adherants
 # liste d'emprunts
 class Bibliotheque:
-    listeDocuments = []
-    listeLivres = []
-    listeEmprunts = []
+
+    liste_adherents: list[Adherent]
     listeAdherents = []
+
+    # noms des fichiers CSV
+    FICHIER_ADHERENTS = "adherents.csv"
+
 
     def charger_livres_depuis_fichier(cls):
         pass
 
 # méthode ajouter document
     def  ajouter_document(self):
+        pass
 
 # méthode ajouter adhérent
-    def ajoiuter_adherent(self):
+    @classmethod
+    def ajoiuter_adherent(cls,nom: str, prenom: str):
+       f - open(FICHIER_ADHERENTS, "a")
 
 
 # méthode supprimer adhérent
     def  supprimmer_adherent(self):
+        pass
 
     @classmethod
     def afficher_liste_livres(cls):
@@ -119,10 +128,15 @@ condition = True
 
 while (condition):
     Menu.afficherMenu()
-    reponse = int(input("Faites un choix (entre 1 et 10) : "))
+    reponse = input("Faites un choix : ").lower()
 # 1 Ajouter adhérent
-    if (reponse == 1):
+    if (reponse == "1"):
         condition = False
+        nom = input("Nom: ")
+        prenom = input("Prénom: ")
+        Bibliotheque.ajouter_adherent(nom, prenom)
+
+
 # 2 Supprimer adhérent
     elif (reponse == "2"):
         condition = False
