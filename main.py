@@ -168,3 +168,74 @@ class Bibliotheque:
                     ecrivain.writerow([a.identifiant, a.nom, a.prenom])
         except Exception as e:
             print(f"Erreur lors de la sauvegarde des adhérents : {e}")
+    # ---- Méthodes internes de recherche ----
+    @classmethod
+    def trouver_livre_par_isbn(cls, isbn: str) -> Livre | None:
+        for l in cls.liste_livres:
+            if l.isbn == isbn:
+                return l
+        return None
+
+    # ---- Gestion des livres ----
+    @classmethod
+    def ajouter_livre(cls, titre: str, auteur: str, isbn: str, annee: str) -> None:
+        if cls.trouver_livre_par_isbn(isbn):
+            print("Un livre avec cet ISBN existe déjà.")
+            return
+        livre = Livre(titre, auteur, isbn, annee, True)
+        cls.liste_livres.append(livre)
+        cls.sauvegarder_livres()
+        print("Livre ajouté :", livre)
+
+    @classmethod
+    def supprimer_livre(cls, isbn: str) -> None:
+        livre = cls.trouver_livre_par_isbn(isbn)
+        if livre is None:
+            print("Livre introuvable.")
+            return
+
+        if not livre.disponible:
+            print("Impossible de supprimer : livre actuellement emprunté.")
+            return
+
+        cls.liste_livres.remove(livre)
+        cls.sauvegarder_livres()
+        print("Livre supprimé.")
+
+    @classmethod
+    def afficher_liste_livres(cls) -> None:
+        if not cls.liste_livres:
+            print("Aucun livre.")
+            return
+        for l in cls.liste_livres:
+            print(l)
+
+    # ---- Gestion fichiers CSV ----
+    @classmethod
+    def charger_livres(cls) -> None:
+        """Charge les livres depuis le fichier CSV"""
+        cls.liste_livres = []
+        if not os.path.exists(cls.FICHIER_LIVRES):
+            return
+        try:
+            with open(cls.FICHIER_LIVRES, newline="", encoding="utf-8") as f:
+                lecteur = csv.reader(f)
+                for ligne in lecteur:
+                    if len(ligne) < 4:  # Ignorer les lignes vides ou incomplètes
+                        continue
+                    titre, auteur, isbn, annee = ligne[0], ligne[1], ligne[2], ligne[3]
+                    disponible = ligne[4].lower() == "true" if len(ligne) > 4 else True
+                    cls.liste_livres.append(Livre(titre, auteur, isbn, annee, disponible))
+        except Exception as e:
+            print(f"Erreur lors du chargement des livres : {e}")
+
+    @classmethod
+    def sauvegarder_livres(cls) -> None:
+        """Sauvegarde la liste des livres dans le fichier CSV"""
+        try:
+            with open(cls.FICHIER_LIVRES, "w", newline="", encoding="utf-8") as f:
+                ecrivain = csv.writer(f)
+                for l in cls.liste_livres:
+                    ecrivain.writerow([l.nom, l.auteur, l.isbn, l.annee, str(l.disponible)])
+        except Exception as e:
+            print(f"Erreur lors de la sauvegarde des livres : {e}")
