@@ -239,3 +239,155 @@ class Bibliotheque:
                     ecrivain.writerow([l.nom, l.auteur, l.isbn, l.annee, str(l.disponible)])
         except Exception as e:
             print(f"Erreur lors de la sauvegarde des livres : {e}")
+
+    # ---- Gestion des emprunts ----
+    @classmethod
+    def ajouter_emprunt(cls, adherent_id: int, isbn: str) -> None:
+        adherent = cls.trouver_adherent_par_id(adherent_id)
+        if adherent is None:
+            print("Adhérent introuvable.")
+            return
+
+        livre = cls.trouver_livre_par_isbn(isbn)
+        if livre is None:
+            print("Livre introuvable.")
+            return
+
+        if not livre.disponible:
+            print("Livre déjà emprunté.")
+            return
+
+        emprunt = Emprunt(adherent.identifiant, livre.isbn, date.today())
+        cls.liste_emprunts.append(emprunt)
+        livre.disponible = False
+        cls.sauvegarder_emprunts()
+        cls.sauvegarder_livres()
+        print("Emprunt ajouté :", emprunt)
+
+    @classmethod
+    def retour_emprunt(cls, isbn: str) -> None:
+        for e in cls.liste_emprunts:
+            if e.isbn_livre == isbn and e.date_retour is None:
+                e.date_retour = date.today()
+                livre = cls.trouver_livre_par_isbn(isbn)
+                if livre:
+                    livre.disponible = True
+                cls.sauvegarder_emprunts()
+                cls.sauvegarder_livres()
+                print("Retour enregistré :", e)
+                return
+        print("Aucun emprunt en cours pour ce livre.")
+
+    @classmethod
+    def afficher_emprunts(cls) -> None:
+        if not cls.liste_emprunts:
+            print("Aucun emprunt.")
+            return
+        for e in cls.liste_emprunts:
+            print(e)
+
+    # ---- Gestion fichiers CSV ----
+    @classmethod
+    def charger_emprunts(cls) -> None:
+        """Charge les emprunts depuis le fichier CSV"""
+        cls.liste_emprunts = []
+        if not os.path.exists(cls.FICHIER_EMPRUNTS):
+            return
+        try:
+            with open(cls.FICHIER_EMPRUNTS, newline="", encoding="utf-8") as f:
+                lecteur = csv.reader(f)
+                for ligne in lecteur:
+                    if len(ligne) < 3:  # Ignorer les lignes vides ou incomplètes
+                        continue
+                    adherent_id, isbn, d_emprunt = ligne[0], ligne[1], ligne[2]
+                    d_retour = ligne[3] if len(ligne) > 3 and ligne[3] else ""
+                    date_emp = date.fromisoformat(d_emprunt)
+                    date_ret = date.fromisoformat(d_retour) if d_retour else None
+                    cls.liste_emprunts.append(Emprunt(int(adherent_id), isbn, date_emp, date_ret))
+        except Exception as e:
+            print(f"Erreur lors du chargement des emprunts : {e}")
+
+    @classmethod
+    def sauvegarder_emprunts(cls) -> None:
+        """Sauvegarde la liste des emprunts dans le fichier CSV"""
+        try:
+            with open(cls.FICHIER_EMPRUNTS, "w", newline="", encoding="utf-8") as f:
+                ecrivain = csv.writer(f)
+                for e in cls.liste_emprunts:
+                    d_retour = e.date_retour.isoformat() if e.date_retour else ""
+                    ecrivain.writerow([e.adherent_id, e.isbn_livre, e.date_emprunt.isoformat(), d_retour])
+        except Exception as e:
+            print(f"Erreur lors de la sauvegarde des emprunts : {e}")
+
+    @classmethod
+    def charger_donnees(cls) -> None:
+        """Charge toutes les données depuis les fichiers CSV"""
+        cls.charger_adherents()
+        cls.charger_livres()
+        cls.charger_emprunts()
+
+    @classmethod
+    def sauvegarder_toutes_donnees(cls) -> None:
+        """Sauvegarde toutes les données dans les fichiers CSV"""
+        cls.sauvegarder_adherents()
+        cls.sauvegarder_livres()
+        cls.sauvegarder_emprunts()
+
+
+# --------- Main ----------
+def demander_entier(message: str) -> int:
+    while True:
+        valeur = input(message)
+        if valeur.isdigit():
+            return int(valeur)
+        print("Saisie erronée, veuillez entrer un nombre.")
+
+
+def boucle_principale() -> None:
+    Bibliotheque.charger_donnees()
+    condition = True
+    while condition:
+        Menu.afficher_menu()
+        choix = input("Choisissez une action : ").strip().lower()
+
+        if choix == "1":
+            nom = input("Nom adhérent : ")
+            prenom = input("Prénom adhérent : ")
+            Bibliotheque.ajouter_adherent(nom, prenom)
+        elif choix == "2":
+            identifiant = demander_entier("Identifiant adhérent à supprimer : ")
+            Bibliotheque.supprimer_adherent(identifiant)
+        elif choix == "3":
+            Bibliotheque.afficher_adherents()
+        elif choix == "4":
+            titre = input("Titre : ")
+            auteur = input("Auteur : ")
+            isbn = input("ISBN : ")
+            annee = input("Année : ")
+            Bibliotheque.ajouter_livre(titre, auteur, isbn, annee)
+        elif choix == "5":
+            isbn = input("ISBN du livre à supprimer : ")
+            Bibliotheque.supprimer_livre(isbn)
+        elif choix == "6":
+            Bibliotheque.afficher_liste_livres()
+        elif choix == "7":
+            identifiant = demander_entier("Identifiant adhérent : ")
+            isbn = input("ISBN du livre à emprunter : ")
+            Bibliotheque.ajouter_emprunt(identifiant, isbn)
+        elif choix == "8":
+            isbn = input("ISBN du livre à retourner : ")
+            Bibliotheque.retour_emprunt(isbn)
+        elif choix == "9":
+            Bibliotheque.afficher_emprunts()
+        elif choix == "q":
+            # Sauvegarder toutes les données avant de quitter
+            Bibliotheque.sauvegarder_toutes_donnees()
+            print("Au revoir ! Toutes les données ont été sauvegardées.")
+            condition = False
+        else:
+            print("Choix erroné !")
+
+
+if __name__ == "__main__":
+    boucle_principale()
+
