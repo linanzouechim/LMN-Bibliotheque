@@ -83,3 +83,89 @@ class Menu:
         print("* 9  Afficher tous les emprunts              *")
         print("* Q  Quitter                                 *")
         print("***********************************************")
+        # --------- Bibliothèque ----------
+class Bibliotheque:
+    # listes en mémoire
+    liste_livres: list[Livre] = []
+    liste_emprunts: list[Emprunt] = []
+    liste_adherents: list[Adherent] = []
+
+    # noms des fichiers CSV
+    FICHIER_ADHERENTS = "adherents.csv"
+    FICHIER_LIVRES = "biblio.csv"
+    FICHIER_EMPRUNTS = "emprunts.csv"
+
+    # ---- Méthodes internes de recherche ----
+    @classmethod
+    def trouver_adherent_par_id(cls, identifiant: int) -> Adherent | None:
+        for a in cls.liste_adherents:
+            if a.identifiant == identifiant:
+                return a
+        return None
+
+    # ---- Gestion des adhérents ----
+    @classmethod
+    def ajouter_adherent(cls, nom: str, prenom: str) -> None:
+        if cls.liste_adherents:
+            nouvel_id = max(a.identifiant for a in cls.liste_adherents) + 1
+        else:
+            nouvel_id = 1
+        adherent = Adherent(nouvel_id, nom, prenom)
+        cls.liste_adherents.append(adherent)
+        cls.sauvegarder_adherents()
+        print("Adhérent ajouté :", adherent)
+
+    @classmethod
+    def supprimer_adherent(cls, identifiant: int) -> None:
+        adherent = cls.trouver_adherent_par_id(identifiant)
+        if adherent is None:
+            print("Adhérent introuvable.")
+            return
+
+        # vérifier s'il a des emprunts en cours
+        for e in cls.liste_emprunts:
+            if e.adherent_id == identifiant and e.date_retour is None:
+                print("Impossible de supprimer : l'adhérent a des emprunts en cours.")
+                return
+
+        cls.liste_adherents.remove(adherent)
+        cls.sauvegarder_adherents()
+        print("Adhérent supprimé.")
+
+    @classmethod
+    def afficher_adherents(cls) -> None:
+        if not cls.liste_adherents:
+            print("Aucun adhérent.")
+            return
+        for a in cls.liste_adherents:
+            print(a)
+
+    # ---- Gestion fichiers CSV ----
+    @classmethod
+    def charger_adherents(cls) -> None:
+        """Charge les adhérents depuis le fichier CSV"""
+        cls.liste_adherents = []
+        if not os.path.exists(cls.FICHIER_ADHERENTS):
+            return
+        try:
+            with open(cls.FICHIER_ADHERENTS, newline="", encoding="utf-8") as f:
+                lecteur = csv.reader(f)
+                for ligne in lecteur:
+                    if len(ligne) < 3:  # Ignorer les lignes vides ou incomplètes
+                        continue
+                    identifiant, nom, prenom = ligne[0], ligne[1], ligne[2]
+                    cls.liste_adherents.append(Adherent(int(identifiant), nom, prenom))
+        except Exception as e:
+            print(f"Erreur lors du chargement des adhérents : {e}")
+
+    @classmethod
+    def sauvegarder_adherents(cls) -> None:
+        """Sauvegarde la liste des adhérents dans le fichier CSV"""
+        try:
+            with open(cls.FICHIER_ADHERENTS, "w", newline="", encoding="utf-8") as f:
+                ecrivain = csv.writer(f)
+                for a in cls.liste_adherents:
+                    ecrivain.writerow([a.identifiant, a.nom, a.prenom])
+        except Exception as e:
+            print(f"Erreur lors de la sauvegarde des adhérents : {e}")
+
