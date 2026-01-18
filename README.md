@@ -5,7 +5,7 @@ Objectif
 Développer une première version **sur console** d’un logiciel de gestion de petite bibliothèque.  
 Cette version sert à tester la **logique métier** (ajout/suppression de documents et d’adhérents, emprunt/retour de livres, suivi des transactions).
 
-<img width="800" height="441" alt="image" src="https://github.com/user-attachments/assets/1af409d6-bfcd-4a70-92f2-0b50c84ad4a4" />
+  <img width="800" height="441" alt="image" src="https://github.com/user-attachments/assets/1af409d6-bfcd-4a70-92f2-0b50c84ad4a4" />
 
 - Ajout d'un adhérent
 
